@@ -23,3 +23,8 @@ export class UserUpdateInput {
 export class UserWhereUniqueInput {
   id: string;
 }
+
+export class ResetUserPasswordInput {
+  id: string;
+  password: string;
+}
