@@ -1,10 +1,14 @@
 {
-  "name": "nest-keycloak-user-manager",
+  "name": "@muhammad-al-amine/nest-keycloak-user-manager",
   "version": "0.0.1",
   "description": "",
   "author": "",
-  "private": true,
+  "private": false,
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Med5KDB/nest-keycloak-user-manager.git"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
