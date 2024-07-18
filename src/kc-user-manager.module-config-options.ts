@@ -1,4 +1,4 @@
-export interface KeycloakConfigOptions {
+export interface KeycloakUserManagerModuleConfigOptions {
   baseUrl: string;
   realm: string;
   clientId: string;

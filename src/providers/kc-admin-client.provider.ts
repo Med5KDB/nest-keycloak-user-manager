@@ -3,11 +3,11 @@ import {
   KeycloakAdminClient,
 } from '@keycloak/keycloak-admin-client/lib/client';
 import { Injectable } from '@nestjs/common';
-import { KeycloakConfigOptions } from 'src/keycloak-config-options';
+import { KeycloakUserManagerModuleConfigOptions } from 'src/kc-user-manager.module-config-options';
 
 @Injectable()
 export class KCAdminClientProvider extends KeycloakAdminClient {
-  constructor(private configOptions: KeycloakConfigOptions) {
+  constructor(private configOptions: KeycloakUserManagerModuleConfigOptions) {
     const keycloakConfig: ConnectionConfig = {
       baseUrl: configOptions.baseUrl,
       realmName: configOptions.realm,
