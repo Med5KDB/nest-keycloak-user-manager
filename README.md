@@ -28,7 +28,6 @@ yarn add keycloak-user-manager
 To configure the module, you need to provide the Keycloak connection details in your `app.module.ts` file:
 
 ```typescript
-# app.module.ts
 import { Module } from '@nestjs/common';
 import { KeycloakUserManagerModule } from 'keycloak-user-manager';
 
@@ -88,9 +87,9 @@ The username is required, and it will be used by Keycloak to identify the user s
 If you need to create your own endpoints, you can use the `KeycloakUserManagerService` provided by the module. Following is an example of how to use it:
 
 ```typescript
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Get, Delete } from '@nestjs/common';
 import { KeycloakUserManagerService } from 'keycloak-user-manager';
-import { AddUserDto, UpdateUserDto } from 'src/dto/custom-users.dto';
+import { AddUserDto, UpdateUserDto } from 'src/dto/custom-users.dto'; // your custom dto
 
 @Controller('custom-users')
 export class UserService {
