@@ -1,73 +1,133 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Keycloak User Manager
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+The `keycloak-user-manager` package provides an easy way to manage users with Keycloak in a NestJS application. It offers pre-built endpoints for common user management tasks while allowing customization for your own endpoints if needed.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
+
+- Easy integration with Keycloak
+- Pre-built user management endpoints
+- Configurable module for different Keycloak instances
+- Extendable service for custom user management logic
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Module/Boilerplate for simplified user-management w/ [Keycloak](https://www.keycloak.org/) in NestJS applications
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+To install the package, use npm or yarn:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install keycloak-user-manager
+# or
+yarn add keycloak-user-manager
 ```
 
-## Test
+## Configuration
 
-```bash
-# unit tests
-$ npm run test
+To configure the module, you need to provide the Keycloak connection details in your `app.module.ts` file:
 
-# e2e tests
-$ npm run test:e2e
+```typescript
+# app.module.ts
+import { Module } from '@nestjs/common';
+import { KeycloakUserManagerModule } from 'keycloak-user-manager';
 
-# test coverage
-$ npm run test:cov
+@Module({
+  imports: [
+    KeycloakUserManagerModule.forRoot({
+      baseUrl: 'http://localhost:8080',
+      realm: 'med5-realm',
+      clientId: 'med5-clientId',
+      clientSecret: 'med5-clientSecret',
+
+    }),
+  ],
+})
+@Global()
+export class AppModule {}
+```
+<p align="center">
+Do not forget to provide your own Keycloak options.
+</p>
+
+## Usage
+### Pre-built Endpoints
+
+Once the module is configured, you can use the following endpoints to manage users:
+
+- `GET /users`: Returns a list of all users in the Keycloak realm.
+- `GET /users/:id`: Returns the user with the specified ID.
+- `POST /users`: Creates a new user in the Keycloak realm.
+- `PUT /users/:id`: Updates the user with the specified ID.
+- `DELETE /users/:id`: Deletes the user with the specified ID.
+- `PUT /users/reset-password`: Resets the password of a user.
+
+You should respect the following shape of the user object:
+```typescript
+{
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;  
+}
+// for resetting the password, the body should be:
+{
+  id: string;
+  password: string;
+}
+```
+<p>The email is optional, but if provided, it will be used to create the user in Keycloak. (It can be used as a login identifier). </p>
+</br>
+<p>
+The username is required, and it will be used by Keycloak to identify the user so it should be unique.
+</p>
+
+
+### Custom Endpoints
+
+If you need to create your own endpoints, you can use the `KeycloakUserManagerService` provided by the module. Following is an example of how to use it:
+
+```typescript
+import { Controller, Post } from '@nestjs/common';
+import { KeycloakUserManagerService } from 'keycloak-user-manager';
+import { AddUserDto, UpdateUserDto } from 'src/dto/custom-users.dto';
+
+@Controller('custom-users')
+export class UserService {
+  constructor(private readonly keycloakUserManagerService: KeycloakUserManagerService) {}
+  
+  @Post()
+  async addUser(@Body() addUserDto: AddUserDto){
+    return await this.keycloakUserManagerService.createUser(addUserDto);
+  }
+
+  @Put(':id')
+  async modifyUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto){
+    return await this.keycloakUserManagerService.updateUser(id, updateUserDto);
+  }
+
+  @Get(':id')
+  async getOneUser(@Param('id') id: string){
+    return await this.keycloakUserManagerService.findUserById(id);
+  }
+
+  @Get()
+  async getAllUsers(){
+    return await this.keycloakUserManagerService.findManyUsers();
+  }
+  @Delete(':id')
+  async removeUser(@Param('id') id: string){
+    return await this.keycloakUserManagerService.deleteUser(id);
+  }
+
+}
 ```
 
-## Support
+## Contributing
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Contributions are welcome! Feel free to do contribute by opening issues and/or pull requests.
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Author - [Mohamed Lamine Badji] (https://flowcv.me/muhammad-al-amine)
+- Twitter - [@Med5Lemzi](https://x.com/Med5Lemzi)
