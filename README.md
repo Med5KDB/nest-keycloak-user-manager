@@ -1,6 +1,6 @@
 # Keycloak User Manager
 
-The `keycloak-user-manager` package provides an easy way to manage users with Keycloak in a NestJS application. It offers pre-built endpoints for common user management tasks while allowing customization for your own endpoints if needed.
+The `nest-keycloak-user-manager` package provides an easy way to manage users with Keycloak in a NestJS application. It offers pre-built endpoints for common user management tasks while allowing customization for your own endpoints if needed.
 
 ## Features
 
@@ -18,9 +18,9 @@ Module/Boilerplate for simplified user-management w/ [Keycloak](https://www.keyc
 To install the package, use npm or yarn:
 
 ```bash
-npm install keycloak-user-manager
+npm install nest-keycloak-user-manager
 # or
-yarn add keycloak-user-manager
+yarn add nest-keycloak-user-manager
 ```
 
 ## Configuration
@@ -29,7 +29,7 @@ To configure the module, you need to provide the Keycloak connection details in 
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { KeycloakUserManagerModule } from 'keycloak-user-manager';
+import { KeycloakUserManagerModule } from 'nest-keycloak-user-manager';
 
 @Module({
   imports: [
@@ -88,7 +88,7 @@ If you need to create your own endpoints, you can use the `KeycloakUserManagerSe
 
 ```typescript
 import { Controller, Post, Body, Put, Param, Get, Delete } from '@nestjs/common';
-import { KeycloakUserManagerService } from 'keycloak-user-manager';
+import { KeycloakUserManagerService } from 'nest-keycloak-user-manager';
 import { AddUserDto, UpdateUserDto } from 'src/dto/custom-users.dto'; // your custom dto
 
 @Controller('custom-users')
