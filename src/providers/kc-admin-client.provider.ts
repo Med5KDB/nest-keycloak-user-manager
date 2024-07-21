@@ -28,4 +28,7 @@ export class KCAdminClientProvider {
       clientSecret: this.configOptions.clientSecret,
     });
   }
+  getkCAdminClient() {
+    return this.KeycloakAdminClient;
+  }
 }

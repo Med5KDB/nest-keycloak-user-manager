@@ -19,18 +19,22 @@ export class KeycloakUserManagerService {
 
   async createUser(data: UserCreateInput): Promise<User> {
     const { firstName, lastName, username, email, password } = data;
-    const createdUser = await this.kcAdminClientProvider.users.create({
-      firstName,
-      lastName,
-      username,
-      email,
-      enabled: true,
-      credentials: [{ type: 'password', value: password, temporary: true }],
-    });
+    const createdUser = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.create({
+        firstName,
+        lastName,
+        username,
+        email,
+        enabled: true,
+        credentials: [{ type: 'password', value: password, temporary: true }],
+      });
     const userId = createdUser.id;
-    const fullUser = await this.kcAdminClientProvider.users.findOne({
-      id: userId,
-    });
+    const fullUser = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.findOne({
+        id: userId,
+      });
     if (!fullUser) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
@@ -42,7 +46,7 @@ export class KeycloakUserManagerService {
     data: UserUpdateInput,
   ): Promise<User> {
     const { firstName, lastName, username, email } = data;
-    await this.kcAdminClientProvider.users.update(
+    await this.kcAdminClientProvider.getkCAdminClient().users.update(
       {
         id: where.id,
       },
@@ -54,24 +58,30 @@ export class KeycloakUserManagerService {
       },
     );
     const userId = where.id;
-    const fullUser = await this.kcAdminClientProvider.users.findOne({
-      id: userId,
-    });
+    const fullUser = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.findOne({
+        id: userId,
+      });
     if (!fullUser) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
     return this.mapKeycloakUserToUser(fullUser);
   }
   async deleteUser(where: UserWhereUniqueInput): Promise<{ id: string }> {
-    await this.kcAdminClientProvider.users.del({ id: where.id });
+    await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.del({ id: where.id });
     return { id: where.id };
   }
 
   async findUserById(where: UserWhereUniqueInput): Promise<User> {
     const userId = where.id;
-    const fullUser = await this.kcAdminClientProvider.users.findOne({
-      id: userId,
-    });
+    const fullUser = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.findOne({
+        id: userId,
+      });
     if (!fullUser) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
@@ -79,14 +89,18 @@ export class KeycloakUserManagerService {
   }
 
   async findManyUsers(): Promise<User[]> {
-    const users = await this.kcAdminClientProvider.users.find();
+    const users = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.find();
     return Promise.all(
       users.map(async (user) => this.mapKeycloakUserToUser(user)),
     );
   }
 
   async countUsers(): Promise<number> {
-    const users = await this.kcAdminClientProvider.users.find();
+    const users = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.find();
     return users.length;
   }
 
@@ -94,7 +108,7 @@ export class KeycloakUserManagerService {
     resetUserPasswordInput: ResetUserPasswordInput,
   ): Promise<User> {
     const { id, password } = resetUserPasswordInput;
-    await this.kcAdminClientProvider.users.resetPassword({
+    await this.kcAdminClientProvider.getkCAdminClient().users.resetPassword({
       id,
       credential: {
         type: 'password',
@@ -103,9 +117,11 @@ export class KeycloakUserManagerService {
       },
     });
     const userId = id;
-    const fullUser = await this.kcAdminClientProvider.users.findOne({
-      id: userId,
-    });
+    const fullUser = await this.kcAdminClientProvider
+      .getkCAdminClient()
+      .users.findOne({
+        id: userId,
+      });
     if (!fullUser) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
