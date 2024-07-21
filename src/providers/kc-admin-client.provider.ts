@@ -1,9 +1,7 @@
-import {
-  ConnectionConfig,
-  KeycloakAdminClient,
-} from '@keycloak/keycloak-admin-client/lib/client';
+import { ConnectionConfig } from '@keycloak/keycloak-admin-client/lib/client';
 import { Injectable } from '@nestjs/common';
 import { KeycloakUserManagerModuleConfigOptions } from 'src/kc-user-manager.module-config-options';
+import KeycloakAdminClient from '@keycloak/keycloak-admin-client';
 
 @Injectable()
 export class KCAdminClientProvider extends KeycloakAdminClient {
