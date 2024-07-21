@@ -1,21 +1,28 @@
-import { ConnectionConfig } from '@keycloak/keycloak-admin-client/lib/client';
 import { Injectable } from '@nestjs/common';
 import { KeycloakUserManagerModuleConfigOptions } from 'src/kc-user-manager.module-config-options';
-import KeycloakAdminClient from '@keycloak/keycloak-admin-client';
 
 @Injectable()
-export class KCAdminClientProvider extends KeycloakAdminClient {
+export class KCAdminClientProvider {
+  private KeycloakAdminClient: any;
+
   constructor(private configOptions: KeycloakUserManagerModuleConfigOptions) {
-    const keycloakConfig: ConnectionConfig = {
-      baseUrl: configOptions.baseUrl,
-      realmName: configOptions.realm,
-    };
-    super(keycloakConfig);
-    this.authenticate();
+    this.initializeClient();
   }
 
-  async authenticate() {
-    await this.auth({
+  async initializeClient() {
+    this.KeycloakAdminClient = (
+      await import('@keycloak/keycloak-admin-client')
+    ).default; // Dynamic import
+    const keycloakConfig = {
+      baseUrl: this.configOptions.baseUrl,
+      realmName: this.configOptions.realm,
+    };
+    this.authenticate(keycloakConfig);
+  }
+
+  async authenticate(keycloakConfig: any) {
+    const client = new this.KeycloakAdminClient(keycloakConfig);
+    await client.auth({
       grantType: 'client_credentials',
       clientId: this.configOptions.clientId,
       clientSecret: this.configOptions.clientSecret,
