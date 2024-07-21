@@ -33,7 +33,7 @@ import { KeycloakUserManagerModule } from 'nest-keycloak-user-manager';
 
 @Module({
   imports: [
-    KeycloakUserManagerModule.forRoot({
+    KeycloakUserManagerModule.register({
       baseUrl: 'http://localhost:8080',
       realm: 'med5-realm',
       clientId: 'med5-clientId',
