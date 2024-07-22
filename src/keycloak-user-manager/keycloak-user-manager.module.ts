@@ -25,7 +25,15 @@ export class KeycloakUserManagerModule extends ConfigurableModuleClass {
           provide: MODULE_OPTIONS_TOKEN,
           useValue: options,
         },
+        {
+          provide: KCAdminClientProvider,
+          useFactory: (options: KeycloakUserManagerModuleConfigOptions) => {
+            return new KCAdminClientProvider(options);
+          },
+          inject: [MODULE_OPTIONS_TOKEN],
+        },
       ],
+      exports: [KCAdminClientProvider],
     };
   }
 }
