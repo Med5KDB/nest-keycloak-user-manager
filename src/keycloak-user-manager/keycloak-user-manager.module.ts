@@ -4,9 +4,9 @@ import { KeycloakUserManagerController } from './keycloak-user-manager.controlle
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
-} from 'src/kc-user-manager.module-definition';
-import { KeycloakUserManagerModuleConfigOptions } from 'src/kc-user-manager.module-config-options';
-import { KCAdminClientProvider } from 'src/providers/kc-admin-client.provider';
+} from '../kc-user-manager.module-definition';
+import { KeycloakUserManagerModuleConfigOptions } from '../kc-user-manager.module-config-options';
+import { KCAdminClientProvider } from '../providers/kc-admin-client.provider';
 
 @Global()
 @Module({
